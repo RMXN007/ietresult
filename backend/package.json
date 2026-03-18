@@ -4,7 +4,7 @@
   "description": "backend that fetch data from iet result website to get student result",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "author": "Raman",
   "license": "ISC",
