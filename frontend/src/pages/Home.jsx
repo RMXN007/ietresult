@@ -22,7 +22,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}/api/result`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
