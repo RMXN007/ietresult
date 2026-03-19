@@ -2,6 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const qs = require('qs');
 
+
 const BASE_URL = 'http://results.ietdavv.edu.in/';
 const RESULT_URL = 'http://results.ietdavv.edu.in/DisplayStudentResult';
 
@@ -22,6 +23,7 @@ async function fetchAndParseResult(rollno, type) {
         });
 
         const html = response.data;
+        console.log(html);
         const $ = cheerio.load(html);
 
         const pageText = $('body').text();
