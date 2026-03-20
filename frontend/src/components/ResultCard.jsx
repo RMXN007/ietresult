@@ -60,7 +60,8 @@ export default function ResultCard({ student, summary }) {
               
               <div className="flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-white/70 print:text-gray-500" />
-                <span className="text-lg">{student.branch}</span>
+                <span className="text-white/70 uppercase tracking-widest text-sm font-bold print:text-gray-500">Branch:</span>
+                <span className="text-lg">{student.branch || 'Unknown'}</span>
               </div>
             </div>
           </div>

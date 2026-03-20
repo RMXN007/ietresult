@@ -31,12 +31,26 @@ async function fetchAndParseResult(rollno, type) {
             return { error: 'Invalid Roll Number or Result not found.' };
         }
 
+        const getBranchFromRoll = (roll) => {
+            const match = roll.match(/[A-Z]/i);
+            if (!match) return '';
+            switch (match[0].toUpperCase()) {
+                case 'C': return 'Computer Science';
+                case 'I': return 'Information Technology';
+                case 'E': return 'Electronics & Instrumentation';
+                case 'T': return 'Electronics & Telecommunication';
+                case 'M': return 'Mechanical';
+                case 'V': return 'Civil';
+                default: return '';
+            }
+        };
+
         const resultJSON = {
             name: '',
             roll: rollno.toUpperCase(),
             enrollment: '',
             semester: '', // Semester and Branch are not always explicitly defined in the table in this exact format. We'll leave them blank if not found.
-            branch: '',
+            branch: getBranchFromRoll(rollno),
             subjects: [],
             total: '',
             sgpa: '',
@@ -57,7 +71,10 @@ async function fetchAndParseResult(rollno, type) {
                     }
                     // In case branch/semester are there on some pages
                     if (text.includes('Branch') || text.includes('Programme')) {
-                        resultJSON.branch = $(tr).find('td').eq(1).text().trim();
+                        const scrapedBranch = $(tr).find('td').eq(1).text().trim();
+                        if (!resultJSON.branch) {
+                            resultJSON.branch = scrapedBranch;
+                        }
                     }
                 });
             }
