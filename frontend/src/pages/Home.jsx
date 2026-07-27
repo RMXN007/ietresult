@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { fetchWithRetry } from '../utils/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 export default function Home() {
   const [rollno, setRollno] = useState('');
