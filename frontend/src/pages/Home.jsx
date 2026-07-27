@@ -1,17 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Loader2 } from 'lucide-react';
-const API_URL = import.meta.env.VITE_API_URL;
+import { Search, Loader2, Sparkles, AlertTriangle } from 'lucide-react';
+import { fetchWithRetry } from '../utils/api';
+
+const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 export default function Home() {
   const [rollno, setRollno] = useState('');
   const [type, setType] = useState('Regular');
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Fetching result...");
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!loading) return;
+    const timer1 = setTimeout(() => setLoadingMessage("Connecting to server..."), 2000);
+    const timer2 = setTimeout(() => setLoadingMessage("Server is waking up, please wait..."), 5000);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      setLoadingMessage("Fetching result...");
+    };
+  }, [loading]);
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setError('');
 
     if (!rollno || rollno.trim() === '') {
@@ -21,99 +37,123 @@ export default function Home() {
 
     setLoading(true);
 
-    try {
-      const response = await fetch(`${API_URL}/api/result`, {
+    const result = await fetchWithRetry(
+      `${API_URL}/api/result`,
+      {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rollno: rollno.trim(), type })
-      });
+      },
+      3,
+      4000
+    );
 
-      const data = await response.json();
+    setLoading(false);
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch result');
-      }
-
-      // Navigate to result page with data
-      navigate('/result', { state: { resultData: data } });
-
-    } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+    if (result.success) {
+      navigate('/result', { state: { resultData: result.data } });
+    } else {
+      setError(result.message);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 selection:bg-[#ccff00] selection:text-black">
-      <div className="bg-white rounded-sm shadow-xl w-full max-w-md overflow-hidden border-2 border-black">
-        <div className="bg-[#0033FF] p-6 text-center text-white border-b-2 border-black">
-          <h1 className="text-3xl font-black tracking-tight uppercase">IET DAVV Results</h1>
-          <p className="text-white/80 font-mono text-xs mt-2 uppercase tracking-widest">Official University Portal Viewer</p>
-        </div>
-
-        <div className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="rollno" className="block text-sm font-medium text-gray-700 mb-1">
-                Roll Number
-              </label>
-              <input
-                id="rollno"
-                type="text"
-                placeholder="e.g. 22I5045"
-                value={rollno}
-                onChange={(e) => setRollno(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all uppercase placeholder:normal-case shadow-sm"
-              />
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black transition-colors duration-300 flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
+      <div className="w-full max-w-md relative animate-fade-in-up">
+        {/* Glow effect only in dark mode */}
+        <div className="hidden dark:block absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-30"></div>
+        
+        <div className="relative bg-white dark:bg-white/10 dark:backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden p-8 transition-all duration-300">
+          
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-white/5 border border-blue-100 dark:border-white/10 mb-4 shadow-inner">
+              <Sparkles className="w-8 h-8 text-blue-500 dark:text-blue-400" />
             </div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">IET Dashboard</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Access your university results instantly</p>
+          </div>
 
-            <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                Student Type
-              </label>
-              <select
-                id="type"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm bg-white"
-              >
-                <option value="Regular">Regular</option>
-                <option value="EX">EX</option>
-                <option value="Elective">Elective</option>
-              </select>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-10 animate-fade-in text-center">
+              <Loader2 className="w-12 h-12 text-indigo-500 dark:text-indigo-400 animate-spin mb-6" />
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white tracking-wide transition-all ease-in-out">
+                {loadingMessage}
+              </h3>
             </div>
-
-            {error && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-                {error}
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-6 animate-fade-in text-center w-full">
+              <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center mb-4 border border-rose-200 dark:border-rose-500/30">
+                <AlertTriangle className="w-8 h-8 text-rose-500 dark:text-rose-400" />
               </div>
-            )}
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Something went wrong</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-8 px-4 leading-relaxed">{error}</p>
+              
+              <div className="flex w-full gap-3">
+                <button
+                  type="button"
+                  onClick={() => setError('')}
+                  className="flex-1 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-800 dark:text-white font-medium py-3 rounded-xl transition-all"
+                >
+                  Edit Details
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl transition-all shadow-[0_4px_14px_rgba(79,70,229,0.39)] dark:shadow-[0_0_15px_rgba(79,70,229,0.3)]"
+                >
+                  Retry Search
+                </button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+              <div className="space-y-1.5">
+                <label htmlFor="rollno" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Roll Number
+                </label>
+                <input
+                  id="rollno"
+                  type="text"
+                  maxLength={7}
+                  placeholder="22M5045"
+                  value={rollno}
+                  onChange={(e) => setRollno(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-gray-600 text-gray-900 dark:text-white shadow-sm dark:shadow-inner"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#ccff00] hover:bg-[#b3e600] text-black font-black uppercase tracking-widest py-4 rounded-sm transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2 border-2 border-black disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Fetching Result...</span>
-                </>
-              ) : (
+              <div className="space-y-1.5">
+                <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Student Type
+                </label>
+                <div className="relative">
+                  <select
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-gray-900 dark:text-white shadow-sm dark:shadow-inner appearance-none relative z-10"
+                  >
+                    <option value="Regular" className="bg-white dark:bg-gray-900">Regular</option>
+                    <option value="EX" className="bg-white dark:bg-gray-900">EX</option>
+                    <option value="Elective" className="bg-white dark:bg-gray-900">Elective</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400 z-20">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2 shadow-[0_4px_14px_rgba(79,70,229,0.39)] dark:shadow-[0_0_20px_rgba(79,70,229,0.3)]"
+              >
                 <>
                   <Search className="w-5 h-5" />
-                  <span>Check Result</span>
+                  <span>View Result</span>
                 </>
-              )}
-            </button>
-          </form>
-        </div>
-
-        <div className="bg-[#1a1a1a] p-4 text-center text-[10px] font-mono tracking-widest text-white uppercase border-t-2 border-black">
-          Not affiliated with Devi Ahilya Vishwavidyalaya
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

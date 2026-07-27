@@ -3,31 +3,29 @@ const cheerio = require('cheerio');
 const qs = require('qs');
 
 
-const BASE_URL = 'http://results.ietdavv.edu.in/';
-const RESULT_URL = 'http://results.ietdavv.edu.in/DisplayStudentResult';
+const BASE_URL = 'https://results.ietdavv.edu.in/';
+const RESULT_URL = 'https://results.ietdavv.edu.in/DisplayStudentResult';
 
 async function fetchAndParseResult(rollno, type) {
     try {
-        const data = qs.stringify({
-            rollno: rollno.toUpperCase(),
-            typeOfStudent: type,
-            Submit: 'View Result'
-        });
-
-        const response = await axios.post(RESULT_URL, data, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'User-Agent': 'Mozilla/5.0'
+        const response = await axios.get(RESULT_URL, {
+            params: {
+                rollno: rollno.toUpperCase(),
+                typeOfStudent: type
             },
-            timeout: 15000 // Add a timeout since the server is unstable
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            },
+            timeout: 15000, // Add a timeout since the server is unstable
+            validateStatus: (status) => status < 600
         });
 
         const html = response.data;
-        console.log(html);
         const $ = cheerio.load(html);
+        $('script').remove(); // Remove script tags to avoid catching JavaScript error handlers in the body text
 
         const pageText = $('body').text();
-        if (pageText.includes('Invalid RollNo') || pageText.includes('Not Found') || pageText.includes('Error')) {
+        if (response.status === 500 || pageText.includes('Invalid RollNo') || pageText.includes('Not Found') || pageText.includes('Error')) {
             return { error: 'Invalid Roll Number or Result not found.' };
         }
 

@@ -10,13 +10,13 @@ export default function Result() {
 
   if (!resultData) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center max-w-sm w-full">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Result Data</h2>
-          <p className="text-gray-500 mb-6">Please search for a roll number first.</p>
+      <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black flex items-center justify-center p-4 transition-colors duration-300">
+        <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 p-8 rounded-2xl shadow-xl dark:shadow-2xl text-center max-w-sm w-full animate-fade-in-up transition-colors duration-300">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">No Data Found</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-8">Please run a search to view results.</p>
           <button 
             onClick={() => navigate('/')} 
-            className="w-full bg-[#0033FF] hover:bg-blue-700 text-white py-2 px-4 rounded-xl transition-all font-medium"
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-[0_4px_14px_rgba(79,70,229,0.39)] dark:shadow-md hover:shadow-indigo-500/25 active:scale-95"
           >
             Go Back Home
           </button>
@@ -25,56 +25,40 @@ export default function Result() {
     );
   }
 
-
-
   return (
-    <div className="min-h-screen bg-white pb-0 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black pb-12 font-sans text-gray-900 dark:text-gray-100 selection:bg-indigo-500 selection:text-white transition-colors duration-300">
       
-      {/* Top Navbar */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20 print:hidden">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      {/* Navbar */}
+      <div className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 print:hidden transition-colors duration-300">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center text-gray-600 hover:text-[#0033FF] transition-colors font-semibold tracking-wide text-sm"
+            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium text-sm group bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-transparent dark:hover:border-white/10"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Search
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            New Search
           </button>
         </div>
       </div>
 
-      {/* Printable Header - Only shows when printing */}
-      <div className="hidden print:block text-center mt-8 mb-4 border-b pb-4">
-        <h1 className="text-2xl font-black text-gray-900">IET DAVV RESULT</h1>
-        <p className="text-gray-500 font-semibold text-sm mt-1">Acquired from official university portal</p>
-      </div>
-
-      {/* Main Content Area - Full Width Bands */}
-      <main className="flex-grow">
-        <div id="result-card">
+      <main className="max-w-6xl mx-auto mt-8 md:mt-12 space-y-12 px-4 sm:px-6 lg:px-8">
+        <div id="result-card" className="space-y-12 bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black p-4 sm:p-8 md:p-12 rounded-3xl -mx-4 sm:-mx-8 md:-mx-12 shadow-xl dark:shadow-2xl transition-colors duration-300">
           <ResultCard student={{
-            name: resultData.name,
-            roll: resultData.roll,
-            enrollment: resultData.enrollment,
-            branch: resultData.branch,
-            semester: resultData.semester
-        }} summary={{
-            sgpa: resultData.sgpa,
-            status: resultData.status
-        }} />
+              name: resultData.name,
+              roll: resultData.roll,
+              enrollment: resultData.enrollment,
+              branch: resultData.branch,
+              semester: resultData.semester
+          }} summary={{
+              sgpa: resultData.sgpa,
+              status: resultData.status
+          }} />
 
-        <ResultTable 
-            subjects={resultData.subjects} 
-        />
+          <ResultTable 
+              subjects={resultData.subjects} 
+          />
         </div>
       </main>
-
-
-      {/* Printable Disclaimer */}
-      <div className="hidden print:block text-center mt-12 text-gray-400 font-medium text-xs">
-        <p>Disclaimer: This is a fetched copy. In case of any discrepancy, please verify with the official IET DAVV portal.</p>
-      </div>
-      
     </div>
   );
 }
