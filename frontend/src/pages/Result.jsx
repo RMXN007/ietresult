@@ -10,7 +10,7 @@ export default function Result() {
 
   if (!resultData) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black flex items-center justify-center p-4 transition-colors duration-300">
+      <div className="min-h-screen bg-transparent flex items-center justify-center p-4 transition-colors duration-300">
         <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 p-8 rounded-2xl shadow-xl dark:shadow-2xl text-center max-w-sm w-full animate-fade-in-up transition-colors duration-300">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">No Data Found</h2>
           <p className="text-gray-500 dark:text-gray-400 mb-8">Please run a search to view results.</p>
@@ -26,7 +26,7 @@ export default function Result() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black pb-12 font-sans text-gray-900 dark:text-gray-100 selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-transparent pb-12 font-sans text-gray-900 dark:text-gray-100 selection:bg-indigo-500 selection:text-white transition-colors duration-300">
       
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 print:hidden transition-colors duration-300">

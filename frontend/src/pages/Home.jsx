@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { fetchWithRetry } from '../utils/api';
+import ietLogo from '../assets/IET-DAVV-Logo.webp';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:5000'
@@ -58,16 +59,20 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-gradient-to-br dark:from-indigo-900 dark:via-gray-900 dark:to-black transition-colors duration-300 flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-transparent transition-colors duration-300 flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
       <div className="w-full max-w-md relative animate-fade-in-up">
         {/* Glow effect only in dark mode */}
         <div className="hidden dark:block absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-30"></div>
-        
+
         <div className="relative bg-white dark:bg-white/10 dark:backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl shadow-xl dark:shadow-2xl overflow-hidden p-8 transition-all duration-300">
-          
+
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-white/5 border border-blue-100 dark:border-white/10 mb-4 shadow-inner">
-              <Sparkles className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+            <div className="flex justify-center mb-4">
+              <img
+                src={ietLogo}
+                alt="IET DAVV Logo"
+                className="w-20 h-20 rounded-full object-cover border border-gray-200 dark:border-white/20 shadow-md bg-white p-1"
+              />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">IET Dashboard</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm">Access your university results instantly</p>
@@ -87,7 +92,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Something went wrong</h3>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-8 px-4 leading-relaxed">{error}</p>
-              
+
               <div className="flex w-full gap-3">
                 <button
                   type="button"
