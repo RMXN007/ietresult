@@ -1,3 +1,4 @@
+const https = require('https');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const qs = require('qs');
@@ -8,6 +9,12 @@ const RESULT_URL = 'https://results.ietdavv.edu.in/DisplayStudentResult';
 
 async function fetchAndParseResult(rollno, type) {
     try {
+        // TEMPORARY: IET result portal currently has an expired SSL certificate.
+        // Remove this httpsAgent once the official certificate is renewed.
+        const httpsAgent = new https.Agent({
+            rejectUnauthorized: false
+        });
+
         const response = await axios.get(RESULT_URL, {
             params: {
                 rollno: rollno.toUpperCase(),
@@ -17,7 +24,8 @@ async function fetchAndParseResult(rollno, type) {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             },
             timeout: 15000, // Add a timeout since the server is unstable
-            validateStatus: (status) => status < 600
+            validateStatus: (status) => status < 600,
+            httpsAgent
         });
 
         const html = response.data;
