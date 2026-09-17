@@ -61,7 +61,7 @@ To get a local copy up and running, follow these simple steps.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/ietresult.git
+   git clone https://github.com/RMXN007/ietresult.git
    cd ietresult
    ```
 
@@ -104,10 +104,8 @@ Distributed under the **ISC License**. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-**Raman** - [@your_handle](https://twitter.com/your_handle)  
-Project Link: [https://github.com/your-username/ietresult](https://github.com/your-username/ietresult)
+**Raman** - [https://github.com/RMXN007](https://github.com/RMXN007)
 
----
 
 > [!NOTE]
 > This application is not affiliated with the Institute of Engineering and Technology (IET) or Devi Ahilya Vishwavidyalaya (DAVV). It is an independent tool designed for student convenience.
