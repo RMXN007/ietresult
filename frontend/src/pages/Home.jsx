@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Loader2, Sparkles, AlertTriangle } from 'lucide-react';
+import { Search, Loader2, Sparkles, AlertTriangle, X } from 'lucide-react';
 import { fetchWithRetry } from '../utils/api';
 import ietLogo from '../assets/IET-DAVV-Logo.webp';
 
@@ -52,7 +52,7 @@ export default function Home() {
     setLoading(false);
 
     if (result.success) {
-      navigate('/result', { state: { resultData: result.data } });
+      navigate('/result', { state: { resultData: { ...result.data, typeOfStudent: type } } });
     } else {
       setError(result.message);
     }
@@ -116,15 +116,28 @@ export default function Home() {
                 <label htmlFor="rollno" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Roll Number
                 </label>
-                <input
-                  id="rollno"
-                  type="text"
-                  maxLength={7}
-                  placeholder="22M5045"
-                  value={rollno}
-                  onChange={(e) => setRollno(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-gray-600 text-gray-900 dark:text-white shadow-sm dark:shadow-inner"
-                />
+                <div className="relative">
+                  <input
+                    id="rollno"
+                    type="text"
+                    maxLength={7}
+                    placeholder="22M5045"
+                    value={rollno}
+                    onChange={(e) => setRollno(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-gray-600 text-gray-900 dark:text-white shadow-sm dark:shadow-inner pr-10"
+                  />
+                  {rollno && (
+                    <button
+                      type="button"
+                      onClick={() => setRollno('')}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus:outline-none"
+                      aria-label="Clear roll number"
+                      title="Clear roll number"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1.5">

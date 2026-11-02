@@ -48,7 +48,8 @@ export default function Result() {
               roll: resultData.roll,
               enrollment: resultData.enrollment,
               branch: resultData.branch,
-              semester: resultData.semester
+              semester: resultData.semester,
+              typeOfStudent: resultData.typeOfStudent
           }} summary={{
               sgpa: resultData.sgpa,
               status: resultData.status
