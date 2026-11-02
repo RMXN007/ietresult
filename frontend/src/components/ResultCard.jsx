@@ -1,4 +1,4 @@
-import { Hash, GraduationCap, Share2, TrendingUp, Award, Download, User } from 'lucide-react';
+import { Hash, GraduationCap, Share2, TrendingUp, Award, Download, User, ExternalLink } from 'lucide-react';
 import html2canvas from "html2canvas";
 
 export default function ResultCard({ student, summary }) {
@@ -71,6 +71,15 @@ export default function ResultCard({ student, summary }) {
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
+            <a
+              href={`https://results.ietdavv.edu.in/DisplayStudentResult?rollno=${student.roll}&typeOfStudent=${student.typeOfStudent || 'Regular'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-gray-50 dark:bg-white/10 dark:hover:bg-white/20 text-gray-700 dark:text-white px-6 py-3.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97] border border-gray-200 dark:border-white/10 print:hidden shadow-sm dark:shadow-lg dark:backdrop-blur-md"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Official Result
+            </a>
             <button
               onClick={handleDownload}
               className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-gray-50 dark:bg-white/10 dark:hover:bg-white/20 text-gray-700 dark:text-white px-6 py-3.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97] border border-gray-200 dark:border-white/10 print:hidden shadow-sm dark:shadow-lg dark:backdrop-blur-md"
